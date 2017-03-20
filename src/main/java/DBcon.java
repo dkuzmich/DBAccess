@@ -79,4 +79,16 @@ public class DBcon {
         }
     }
 
+
+
+    public void setConClosed(){
+        try {
+            con.close();
+            System.out.println("Connection closed");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("cannot close connections");
+        }
+    }
+
 }
