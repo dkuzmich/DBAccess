@@ -6,6 +6,11 @@ public class Main {
         System.out.println("Heel");
         DBcon dbcon=new DBcon();
         dbcon.setDBCon();
-        dbcon.getTableData();
+        dbcon.readTableInfo();
+        dbcon.deleteRowByID();
+        dbcon.readTableInfo();
+        dbcon.addRowToTable();
+        dbcon.readTableInfo();
+        dbcon.closeConnection();
     }
 }
