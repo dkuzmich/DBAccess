@@ -88,7 +88,7 @@ public class DBcon {
                 String information = res.getString("Information");
                 //Display info
                 System.out.println();
-                System.out.println("ID=" + id + " Name= " + username + "Info = " + information);
+                System.out.println("ID=" + id + " Name= " + username + " Info = " + information);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -105,54 +105,64 @@ public class DBcon {
         id = sc.nextInt();
         System.out.println("You enter id= " + id);
 
-        String sqlTestID = "Select ID from testtable where id=" + id+"";
+        String sqlTestID = "Select * from testtable where id=" + id + "";
         try {
-            bool = stmt.execute(sqlTestID);
-            System.out.println("Row is finding for delete, bool = "+bool);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        if (bool) {
+            ResultSet res = stmt.executeQuery(sqlTestID);
+            if (res.next()) {
+                int idc=res.getInt("ID");
+                String userName=res.getString("UserName");
+                String Information=res.getString("Information");
+
+                System.out.println("Found string for delete by ID= "+idc+" userName= "+userName+ "Information= "+Information);
+       }
+
+
             String sql = "DELETE FROM testtable where ID= " + id + "";
-            try {
-                String testSQL = "Select From testtable userName where id=" + id + "";
-                boolean res = stmt.execute(sql);
-                System.out.println("Row successfully deleted!");
-            } catch (SQLException e) {
-                e.printStackTrace();
-                System.out.println("Can't delete entered row by id =+ + ");
-            }
-        } else System.out.println("Cannot find row by ID in DB. Bay...");
+
+            stmt.executeUpdate(sql);
+            System.out.println("!!!!!!! Row is deleted!!!!!!!!!!!");
+            readTableInfo();
+
+        }catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Can't delete entered row by id =+ + ");
+        }
     }
+
+
 
 
     public void addRowToTable() {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         Scanner sc = new Scanner(System.in);
 
+
+
         String sql = "";
         System.out.println("Let add info to table please enter ID, userName, Information");
         try {
-          /** System.out.println("Enter ID ");
+           System.out.println("Enter ID ");
             //int ID=br.read();
             int ID = sc.nextInt();
 
             System.out.println("Enter userName");
             //String userName=br.readLine();
-            String UserName =(String) sc.next().toString();
+            String UserName =((String) sc.next().toString()).trim();
             System.out.println("Enter information");
             //String Information=br.readLine();
             String Information =(String) sc.next().toString();
 
             System.out.println("You ented ID- "+ID+" userName = "+UserName+" Information = "+Information);
-           // sql = "INSERT INTO testtable VALUES(" + ID + "," + UserName + "," + Information + ")";
-           **/
-            sql = "INSERT INTO testtable VALUES(2,kuzmich,test)";
+            sql = "INSERT INTO testtable VALUES("+ID+", '"+UserName+"' , '"+Information+"')";
 
-            ResultSet res = stmt.executeQuery(sql);
+           // sql = "INSERT INTO testtable VALUES(2,kuzmich,test)";
+            PreparedStatement prst=con.prepareStatement(sql);
+            int r = prst.executeUpdate(sql);
+
         } catch (SQLException e) {
             System.out.println(" =======!!!!!!!Info cannot be added to table!!!!!");
             e.printStackTrace();
+
         }
     }
 
