@@ -1,7 +1,9 @@
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.*;
+import java.util.Scanner;
 
 /**
  * Created by Dima on 20.03.2017.
@@ -25,7 +27,7 @@ public class DBcon {
             System.out.println("Connecting to DB...");
             con = DriverManager.getConnection(Url, User, Pass);
             System.out.println("Created statement");
-            stmt=con.createStatement();
+            stmt = con.createStatement();
             System.out.println("Connection established ... ! ");
 
         } catch (ClassNotFoundException e) {
@@ -37,6 +39,29 @@ public class DBcon {
         }
     }
 
+    public void myCreateDatabase(){
+        setDBCon();
+        String sql="Create database test3";
+
+        try {
+            int er=stmt.executeUpdate(sql);
+            System.out.println("Database test2 created ");
+            closeConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public  void myDropDatabase(){
+        setDBCon();
+        String SQL="Drop database test3";
+        try {
+            int rs=stmt.executeUpdate(SQL);
+            System.out.println("Table droped");
+            closeConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void readTableInfo() {
 
@@ -61,7 +86,7 @@ public class DBcon {
                 int id = res.getInt("ID");
                 String username = res.getString("UserName");
                 String information = res.getString("Information");
-             //Display info
+                //Display info
                 System.out.println();
                 System.out.println("ID=" + id + " Name= " + username + "Info = " + information);
             }
@@ -71,46 +96,62 @@ public class DBcon {
     }
 
     public void deleteRowByID() {
-        BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
-        int id= 0;
+        Scanner sc = new Scanner(System.in);
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int id = 0;
+        Boolean bool = false;
+        System.out.println("Please enter row for delete");
+        //id = br.read();
+        id = sc.nextInt();
+        System.out.println("You enter id= " + id);
+
+        String sqlTestID = "Select ID from testtable where id=" + id+"";
         try {
-            System.out.println("Please enter row for delete");
-            id = br.read();
-            System.out.println("You enter id= "+id);
-        } catch (IOException e) {
+            bool = stmt.execute(sqlTestID);
+            System.out.println("Row is finding for delete, bool = "+bool);
+        } catch (SQLException e) {
             e.printStackTrace();
-            System.out.println("Cant read info from keyboard");
         }
-        String sql = "DELETE FROM testtable where ID= " + id+"";
-        try {
-            boolean res = stmt.execute(sql);
-            System.out.println("Row successfully deleted!");
-        }catch (SQLException e){
-            e.printStackTrace();
-            System.out.println("Can't delete entered row by id =+ + ");
-        }
+        if (bool) {
+            String sql = "DELETE FROM testtable where ID= " + id + "";
+            try {
+                String testSQL = "Select From testtable userName where id=" + id + "";
+                boolean res = stmt.execute(sql);
+                System.out.println("Row successfully deleted!");
+            } catch (SQLException e) {
+                e.printStackTrace();
+                System.out.println("Can't delete entered row by id =+ + ");
+            }
+        } else System.out.println("Cannot find row by ID in DB. Bay...");
     }
 
-    public void addRowToTable(){
-        BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
-        String sql="";
+
+    public void addRowToTable() {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        Scanner sc = new Scanner(System.in);
+
+        String sql = "";
         System.out.println("Let add info to table please enter ID, userName, Information");
         try {
-        System.out.println("Enter ID ");
-        int ID=br.read();
-        System.out.println("Enter userName");
-        String userName=br.readLine();
-        System.out.println("Enter information");
-        String Information=br.readLine();
+          /** System.out.println("Enter ID ");
+            //int ID=br.read();
+            int ID = sc.nextInt();
 
-        sql="INSERT INTO testtable VALUES("+ID+","+userName+","+Information+")";
+            System.out.println("Enter userName");
+            //String userName=br.readLine();
+            String UserName =(String) sc.next().toString();
+            System.out.println("Enter information");
+            //String Information=br.readLine();
+            String Information =(String) sc.next().toString();
 
-            boolean res=stmt.execute(sql);
+            System.out.println("You ented ID- "+ID+" userName = "+UserName+" Information = "+Information);
+           // sql = "INSERT INTO testtable VALUES(" + ID + "," + UserName + "," + Information + ")";
+           **/
+            sql = "INSERT INTO testtable VALUES(2,kuzmich,test)";
+
+            ResultSet res = stmt.executeQuery(sql);
         } catch (SQLException e) {
-            System.out.println("Info added to table");
-            e.printStackTrace();
-        } catch (IOException e) {
-            System.out.println("Info added to table");
+            System.out.println(" =======!!!!!!!Info cannot be added to table!!!!!");
             e.printStackTrace();
         }
     }
