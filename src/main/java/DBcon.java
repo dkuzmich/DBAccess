@@ -1,3 +1,5 @@
+import com.sun.org.apache.xpath.internal.SourceTree;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +19,51 @@ public class DBcon {
     Connection con = null;
     Statement stmt = null;
     ResultSet res = null;
+
+    public void deleteRowWithResultSet(){
+        Scanner sc = new Scanner(System.in);
+
+        try {
+
+            Connection con2=DriverManager.getConnection(Url, User, Pass);
+            Statement stmn2=con2.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+
+            readTableInfo();
+
+            System.out.println("Please enter row for delete");
+            int id = sc.nextInt();
+            System.out.println("You enter id= " + id);
+            String sqlTestID = "Select ID from testtable where ID=" + id + "";
+
+            ResultSet res2=stmn2.executeQuery(sqlTestID);
+
+            res2.beforeFirst();
+            while(res2.next()){
+                int newID=res2.getInt("ID")+10;
+                String userName=res2.getString("UserName");
+                String inform=res2.getString("Information");
+
+                res2.updateInt("ID",777*newID);
+                res2.updateString("UserName", userName);
+                res2.updateString("Infomation",inform);
+
+                res2.updateRow();
+            }
+
+            System.out.println("Info updated in table ");
+            readTableInfo();
+            System.out.println("Row is begin deleting from table");
+          //  res.deleteRow();
+           // readTableInfo();
+            System.out.println("Row is already deleted from table");
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
     public void setDBCon() {
 
