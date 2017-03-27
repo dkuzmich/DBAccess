@@ -11,6 +11,7 @@ public class DbResultSet {
     static final String Pass = "12345";
     Connection con=null;
     Statement stm=null;
+    PreparedStatement pstm=null;
 
     public void setDBResSet(){
         try {
@@ -23,10 +24,29 @@ public class DbResultSet {
 
             //3. Execute query to create statment
             System.out.println("Create statement");
+
+
+
             stm=con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 
             String sql;
             sql="SELECT ID, UserName, Information FROM testtable";
+
+
+            //test Prepared stm
+            pstm=con.prepareStatement(sql);
+
+            ResultSet res=pstm.executeQuery();
+            System.out.println("!!! Print info from prepared statement!!!");
+            while (res.next()){
+                int ID=res.getInt("ID");
+                String UserName=res.getString("UserName");
+                String Information=res.getString("Information");
+                System.out.println("ID= "+ID+" UserName= "+UserName+" Information "+Information);
+            }
+            System.out.println("!!! END info from prepared statement!!!");
+
+
             ResultSet resultSet=stm.executeQuery(sql);
 
             //Move cursor to last row
@@ -44,10 +64,10 @@ public class DbResultSet {
             System.out.println("Displaying record all other records...");
             while (resultSet.next()){
                 int ID=resultSet.getInt("ID");
-                String UserName=resultSet.getString("UserName");
-                String Information=resultSet.getString("Information");
-                System.out.println("ID= "+ID+" UserName= "+UserName+"Information"+Information);
-            }
+            String UserName=resultSet.getString("UserName");
+            String Information=resultSet.getString("Information");
+            System.out.println("ID= "+ID+" UserName= "+UserName+"Information"+Information);
+        }
 
             //Clean up environment
             System.out.println("Close all conection");
