@@ -21,6 +21,8 @@ public class DbCommitRollBack {
             //2. Open connection
             System.out.println("Connecting to DB...");
             con = DriverManager.getConnection(Url, User, Pass);
+            String sqlprs="INSERT INTO testtable (ID, UserName, Information) VALUES (?,?,?)";
+            PreparedStatement pst=con.prepareStatement(sqlprs);
 
             //3. Execute query to create statment
             System.out.println("Create statement");
@@ -34,13 +36,24 @@ public class DbCommitRollBack {
             //STEP 6: INSERT a row into Employees table
             System.out.println("Insert into DB....");
 
-            String sql= "INSERT INTO testtable VALUES (01,'sita','yera')";
+            String sql= "INSERT INTO testtable VALUES (101,'1sita','yera')";
 
-            stm.executeUpdate(sql);
+            //stm.executeUpdate(sql);
+            stm.addBatch(sql);
 
             //STEP 7: INSERT one more row into Employees table
-            sql="INSERT INTO testtable VALUES (02, 'atis','test')";
-            stm.executeUpdate(sql);
+            String sql2="INSERT INTO testtable VALUES (102, '1atis','test')";
+            //stm.executeUpdate(sql);
+            stm.addBatch(sql2);
+
+            //Add to batch PrepStm
+            pst.setInt(1,111);
+            pst.setString(2,"Yahu");
+            pst.setString(3,"Tstttt");
+            pst.addBatch();
+
+            int [] res2=pst.executeBatch();
+
 
             //STEP 8: Commit data here
             System.out.println("Commiting data here....");
@@ -65,6 +78,7 @@ public class DbCommitRollBack {
         } catch (SQLException ex) {
             try {
                 con.rollback();
+                System.out.println("!!!!!!Roll Back!!!!");
             } catch (SQLException e) {
                 e.printStackTrace();
             }
